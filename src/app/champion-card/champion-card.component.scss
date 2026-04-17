@@ -1,0 +1,54 @@
+.champion-card {
+  background: #0b1220;
+  border-radius: 1rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.55);
+  }
+
+  &:focus-visible {
+    outline: 2px solid #a5b4fc;
+    outline-offset: 3px;
+  }
+}
+
+.champion-card__image {
+  border-radius: 0.75rem;
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  margin-bottom: 0.75rem;
+}
+
+.champion-card__info {
+  width: 100%;
+}
+
+.champion-card__name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.champion-card__name {
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.champion-card__meta {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #a5b4fc;
+}

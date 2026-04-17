@@ -1,0 +1,17 @@
+<a class="champion-card" [routerLink]="['/champion', champion().id]">
+  <img [ngSrc]="championImageUrl" width="120" height="120" class="champion-card__image" [alt]="champion().name" />
+
+  <div class="champion-card__info">
+    <div class="champion-card__name-row">
+      <h2 class="champion-card__name">{{ champion().name }}</h2>
+      <app-fav-button
+        [isFavorite]="champion().isFavorite"
+        (toggled)="onFavToggled()"
+        (click)="$event.stopPropagation()"
+      />
+    </div>
+    <p class="champion-card__meta">
+      {{ champion().role }} • {{ champion().lane }} • Difficulté : {{ champion().difficulty }}/5
+    </p>
+  </div>
+</a>

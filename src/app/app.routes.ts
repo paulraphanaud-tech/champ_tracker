@@ -13,4 +13,11 @@ export const routes: Routes = [
         m => m.ChampionDetailsComponent
       ),
   },
+  {
+    path: 'explorer',
+    loadComponent: () =>
+      import('./explorer/champion-explorer.component').then(
+        m => m.ChampionExplorerComponent
+      ),
+  },
 ];

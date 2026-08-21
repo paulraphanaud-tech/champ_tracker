@@ -1,0 +1,49 @@
+<main class="explorer">
+  <header class="explorer__header">
+    <div>
+      <a class="explorer__back" routerLink="/">← Retour</a>
+      <h1 class="explorer__title">Explorateur de champions</h1>
+      <p class="explorer__subtitle">Données en direct depuis l'API publique Data Dragon.</p>
+    </div>
+  </header>
+
+  @if (presenter.loading()) {
+    <p class="explorer__status" role="status">Chargement des champions…</p>
+  } @else if (presenter.error()) {
+    <p class="explorer__status explorer__status--error" role="alert">
+      Impossible de charger les champions depuis l'API. Réessaie plus tard.
+    </p>
+  } @else {
+    <section class="explorer__grid" aria-label="Champions disponibles">
+      @for (champion of presenter.champions(); track trackByName($index, champion)) {
+        <article class="explorer-card">
+          <img
+            [ngSrc]="champion.imageUrl"
+            width="80"
+            height="80"
+            class="explorer-card__image"
+            [alt]="champion.name"
+          />
+          <div class="explorer-card__body">
+            <h2 class="explorer-card__name">{{ champion.name }}</h2>
+            <p class="explorer-card__title">{{ champion.title }}</p>
+            <ul class="explorer-card__tags">
+              @for (tag of champion.tags; track tag) {
+                <li class="explorer-card__tag">{{ tag }}</li>
+              }
+            </ul>
+            <button
+              type="button"
+              class="explorer-card__track"
+              [class.explorer-card__track--tracked]="presenter.isTracked(champion.name)"
+              [attr.aria-pressed]="presenter.isTracked(champion.name)"
+              (click)="presenter.isTracked(champion.name) ? presenter.untrack(champion) : presenter.track(champion)"
+            >
+              {{ presenter.isTracked(champion.name) ? 'Ne plus suivre' : 'Suivre ce champion' }}
+            </button>
+          </div>
+        </article>
+      }
+    </section>
+  }
+</main>

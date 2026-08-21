@@ -1,0 +1,141 @@
+.explorer {
+  min-height: 100vh;
+  padding: var(--space-8);
+  background: var(--color-bg);
+  color: var(--color-text);
+  box-sizing: border-box;
+}
+
+.explorer__header {
+  margin-bottom: var(--space-6);
+}
+
+.explorer__back {
+  display: inline-block;
+  color: var(--color-accent);
+  text-decoration: none;
+  font-size: 0.9rem;
+  margin-bottom: var(--space-2);
+
+  &:hover {
+    color: #fff;
+  }
+}
+
+.explorer__title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0 0 0.35rem;
+}
+
+.explorer__subtitle {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.explorer__status {
+  color: var(--color-accent);
+
+  &--error {
+    color: var(--color-danger);
+  }
+}
+
+// Grille responsive : auto-fill (pas auto-fit) car on veut que des cartes de largeur
+// fixe minimale s'ajoutent en flux plutôt que de s'étirer sur une grande liste distante.
+.explorer__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: var(--space-4);
+}
+
+.explorer-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  display: flex;
+  gap: var(--space-3);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+.explorer-card__image {
+  border-radius: var(--radius-md);
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.explorer-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+}
+
+.explorer-card__name {
+  font-size: 1.05rem;
+  margin: 0;
+}
+
+.explorer-card__title {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--color-accent);
+  text-transform: capitalize;
+}
+
+.explorer-card__tags {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin: var(--space-1) 0;
+  padding: 0;
+}
+
+.explorer-card__tag {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 0.15rem var(--space-2);
+}
+
+// Le bouton est un vrai toggle : suivre <-> ne plus suivre. L'état "suivi" est
+// rempli (couleur d'accent) pour se distinguer d'un coup d'oeil, et vire au rouge
+// au survol pour signaler que le clic va retirer le champion de la liste.
+.explorer-card__track {
+  margin-top: auto;
+  align-self: flex-start;
+  background: transparent;
+  border: 1px solid var(--color-accent);
+  color: var(--color-accent);
+  border-radius: var(--radius-sm);
+  padding: var(--space-2) var(--space-3);
+  font-size: 0.8rem;
+  cursor: pointer;
+
+  &:hover {
+    background: var(--color-accent);
+    color: var(--color-surface);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  &--tracked {
+    background: var(--color-accent);
+    color: var(--color-surface);
+
+    &:hover {
+      background: var(--color-danger);
+      border-color: var(--color-danger);
+    }
+  }
+}

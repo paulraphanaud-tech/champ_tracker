@@ -1,1 +1,44 @@
-/* You can add global styles to this file, and also import other style files */
+/*
+ * Styles globaux, chargés en premier (voir angular.json > architect.build.styles).
+ * Ces custom properties sont posées sur :root : elles sont héritées par tout le DOM,
+ * y compris à l'intérieur des styles encapsulés de chaque composant (les variables CSS
+ * traversent l'encapsulation Shadow-DOM-like d'Angular, contrairement aux sélecteurs
+ * classiques). Un composant peut les redéfinir localement sur son propre hôte pour
+ * override un thème sans dupliquer les valeurs — voir docs/CSS_NOTES.md pour le détail
+ * de la cascade et de la spécificité entre ce fichier et les *.component.scss.
+ */
+:root {
+  color-scheme: dark;
+
+  --color-bg: #050914;
+  --color-surface: #0b1220;
+  --color-border: #1e2d45;
+  --color-text: #f5f5f5;
+  --color-text-muted: #64748b;
+  --color-accent: #a5b4fc;
+  --color-danger: #fca5a5;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+
+  --radius-sm: 0.5rem;
+  --radius-md: 0.75rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.25rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  /* Pile de polices système : zéro requête réseau pour le texte (RWEB — pas de web font). */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+}

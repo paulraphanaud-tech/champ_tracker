@@ -1,23 +1,76 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
+import { of } from 'rxjs';
+import { By } from '@angular/platform-browser';
 import { ChampionDetailsComponent } from './champion-details.component';
+import { ChampionService } from '../champion.service';
+import { RemoteChampion } from '../champion-api.service';
 
-describe('ChampionDetailsComponent', () => {
-  let component: ChampionDetailsComponent;
-  let fixture: ComponentFixture<ChampionDetailsComponent>;
+const REMOTE_AHRI: RemoteChampion = {
+  id: 'Ahri',
+  name: 'Ahri',
+  title: 'the Nine-Tailed Fox',
+  blurb: 'Ahri est une mage.',
+  tags: ['Mage'],
+  imageUrl: 'https://example.test/ahri.png',
+};
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
-      imports: [ChampionDetailsComponent]
-    })
-    .compileComponents();
+const REMOTE_LEE_SIN: RemoteChampion = {
+  id: 'LeeSin',
+  name: 'Lee Sin',
+  title: 'the Blind Monk',
+  blurb: 'Lee Sin est un combattant.',
+  tags: ['Fighter'],
+  imageUrl: 'https://example.test/lee-sin.png',
+};
 
-    fixture = TestBed.createComponent(ChampionDetailsComponent);
-    component = fixture.componentInstance;
+function activatedRouteWithId(id: string) {
+  return { paramMap: of(convertToParamMap({ id })) };
+}
+
+describe('ChampionDetailsComponent (integration)', () => {
+  let championService: ChampionService;
+
+  function createFixture(id: string): ComponentFixture<ChampionDetailsComponent> {
+    localStorage.clear();
+    TestBed.configureTestingModule({
+      imports: [ChampionDetailsComponent],
+      providers: [
+        provideRouter([]),
+        { provide: ActivatedRoute, useValue: activatedRouteWithId(id) },
+      ],
+    });
+    championService = TestBed.inject(ChampionService);
+    // Ahri obtient l'id 1, Lee Sin l'id 2 (auto-incrément dans ChampionService).
+    championService.addChampion(REMOTE_AHRI);
+    championService.addChampion(REMOTE_LEE_SIN);
+    const fixture = TestBed.createComponent(ChampionDetailsComponent);
     fixture.detectChanges();
+    return fixture;
+  }
+
+  afterEach(() => localStorage.clear());
+
+  it('resolves the champion from the route id via the real ChampionService', () => {
+    const fixture = createFixture('1');
+    expect(fixture.componentInstance.champion()?.name).toBe('Ahri');
+    expect(fixture.nativeElement.textContent).toContain('Ahri');
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('shows a not-found state when no champion matches the route id', () => {
+    const fixture = createFixture('999');
+    expect(fixture.componentInstance.champion()).toBeUndefined();
+    expect(fixture.nativeElement.textContent).toContain('introuvable');
+  });
+
+  it('toggling favorite here updates the same shared ChampionService state used by the dashboard', () => {
+    const fixture = createFixture('2');
+    expect(championService.getById(2)?.isFavorite).toBe(false);
+
+    fixture.debugElement.query(By.css('app-fav-button button')).nativeElement.click();
+    fixture.detectChanges();
+
+    expect(championService.getById(2)?.isFavorite).toBe(true);
+    expect(fixture.componentInstance.champion()?.isFavorite).toBe(true);
   });
 });

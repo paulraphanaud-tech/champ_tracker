@@ -1,9 +1,29 @@
 <main class="dashboard">
-    <h1 class="dashboard__title">Mes champions</h1>
+    <header class="dashboard__toolbar">
+        <h1 class="dashboard__title">Mes champions</h1>
+        @if (presenter.hasAnyChampion()) {
+        <input
+            type="search"
+            class="dashboard__search"
+            placeholder="Rechercher un champion…"
+            aria-label="Rechercher un champion"
+            #searchInput
+            (input)="presenter.updateSearch(searchInput.value)"
+        />
+        }
+    </header>
 
+    @if (!presenter.hasAnyChampion()) {
+    <p class="dashboard__empty-state">
+        Vous ne suivez encore aucun champion. Direction l'<a routerLink="/explorer">Explorateur</a> pour en ajouter un !
+    </p>
+    } @else {
     <section class="dashboard__grid" aria-label="Liste de champions">
         @for (champion of presenter.champions(); track champion.id) {
         <app-champion-card [champion]="champion" (favToggled)="presenter.toggleFavorite(champion.id)" />
+        } @empty {
+        <p class="dashboard__empty">Aucun champion ne correspond à la recherche.</p>
         }
     </section>
+    }
 </main>

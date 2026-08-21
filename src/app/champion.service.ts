@@ -1,37 +1,42 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, effect, signal } from '@angular/core';
 import { Champion, ChampionLane, ChampionRole } from './champion';
+import { RemoteChampion } from './champion-api.service';
+
+const STORAGE_KEY = 'champ-tracker.champions.v1';
+
+const ROLE_TAG_MAP: Record<string, ChampionRole> = {
+  Assassin: ChampionRole.Assassin,
+  Fighter: ChampionRole.Fighter,
+  Mage: ChampionRole.Mage,
+  Marksman: ChampionRole.Marksman,
+  Support: ChampionRole.Support,
+  Tank: ChampionRole.Tank,
+};
+
+function loadPersistedChampions(): Champion[] {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as Champion[]) : [];
+  } catch {
+    return [];
+  }
+}
 
 @Injectable({ providedIn: 'root' })
 export class ChampionService {
-  readonly champions = signal<Champion[]>([
-    {
-      id: 1,
-      name: 'Ahri',
-      role: ChampionRole.Mage,
-      lane: ChampionLane.Mid,
-      difficulty: 3,
-      isFavorite: true,
-      notes: 'Roam après le niveau 6, chercher des charms sur les carries.',
-    },
-    {
-      id: 2,
-      name: 'Lee Sin',
-      role: ChampionRole.Fighter,
-      lane: ChampionLane.Jungle,
-      difficulty: 5,
-      isFavorite: false,
-      notes: 'Fort early game, chercher les ganks niveau 3.',
-    },
-    {
-      id: 3,
-      name: 'Thresh',
-      role: ChampionRole.Support,
-      lane: ChampionLane.Bot,
-      difficulty: 4,
-      isFavorite: true,
-      notes: "Hook depuis le fog, protéger l'ADC avec la lanterne.",
-    },
-  ]);
+  readonly champions = signal<Champion[]>(loadPersistedChampions());
+
+  constructor() {
+    // Cache local : on réécrit la liste suivie à chaque changement pour la
+    // retrouver telle quelle après un refresh de page.
+    effect(() => {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(this.champions()));
+      } catch {
+        // Stockage indisponible (navigation privée, quota dépassé…) : on continue en mémoire seule.
+      }
+    });
+  }
 
   getById(id: number): Champion | undefined {
     return this.champions().find(c => c.id === id);
@@ -41,5 +46,33 @@ export class ChampionService {
     this.champions.update(list =>
       list.map(c => (c.id === id ? { ...c, isFavorite: !c.isFavorite } : c))
     );
+  }
+
+  isTracked(name: string): boolean {
+    return this.champions().some(c => c.name === name);
+  }
+
+  addChampion(remote: RemoteChampion): void {
+    if (this.isTracked(remote.name)) {
+      return;
+    }
+    const nextId = this.champions().reduce((max, c) => Math.max(max, c.id), 0) + 1;
+    const role = ROLE_TAG_MAP[remote.tags[0]] ?? ChampionRole.Fighter;
+    this.champions.update(list => [
+      ...list,
+      {
+        id: nextId,
+        name: remote.name,
+        role,
+        lane: ChampionLane.Top,
+        difficulty: 3,
+        isFavorite: false,
+        notes: remote.blurb,
+      },
+    ]);
+  }
+
+  removeChampion(remote: RemoteChampion): void {
+    this.champions.update(list => list.filter(c => c.name !== remote.name));
   }
 }

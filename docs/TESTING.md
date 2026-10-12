@@ -24,8 +24,8 @@ unitaires bon marché à la base, un nombre raisonnable de tests d'intégration/
 au milieu, et très peu (voire zéro) d'e2e au sommet.
 
 Ce repo n'a pas d'outil e2e configuré (Cypress/Playwright) : l'application est petite,
-sans backend réel, et les parcours critiques (afficher un champion, le mettre en
-favori, l'ajouter depuis l'explorateur) sont déjà couverts en intégration ci-dessous.
+sans backend réel, et les parcours critiques (afficher un champion, consulter sa
+page détails, l'ajouter depuis l'explorateur) sont déjà couverts en intégration ci-dessous.
 Ajouter un vrai navigateur piloté pour ça serait un coût qui ne changerait pas la
 confiance qu'on a dans le code.
 
@@ -35,18 +35,17 @@ confiance qu'on a dans le code.
 
 | Fichier | Ce qu'il isole |
 |---|---|
-| `src/app/champion.service.spec.ts` | La logique pure de `ChampionService` (`toggleFavorite`, `getById`, `isTracked`, `addChampion`, `removeChampion`), y compris la persistance dans `localStorage` (le service se réhydrate à l'identique dans une nouvelle instance, simulant un refresh de page), sans aucun rendu DOM. |
+| `src/app/champion.service.spec.ts` | La logique pure de `ChampionService` (`getById`, `isTracked`, `addChampion`, `removeChampion`), y compris la persistance dans `localStorage` (le service se réhydrate à l'identique dans une nouvelle instance, simulant un refresh de page), sans aucun rendu DOM. |
 | `src/app/champion-api.service.spec.ts` | `ChampionApiService` avec `HttpTestingController` : le vrai réseau est remplacé par des réponses simulées. Vérifie le mapping de la réponse Data Dragon **et** le comportement de cache (`share()` + `ReplaySubject`) — un deuxième abonné ne redéclenche pas d'appel HTTP. |
-| `src/app/dashboard/dashboard.presenter.spec.ts` | `DashboardPresenter` avec un `ChampionService` **mocké** (spy) : vérifie la délégation (`toggleFavorite`) et le filtrage de recherche en isolation, sans dépendre du vrai service ni du DOM. |
+| `src/app/dashboard/dashboard.presenter.spec.ts` | `DashboardPresenter` avec un `ChampionService` **mocké** (spy) : vérifie l'exposition des champions (`hasAnyChampion`) et le filtrage de recherche en isolation, sans dépendre du vrai service ni du DOM. |
 
 ### Intégration / composants — plusieurs unités connectées, rendu réel (TestBed)
 
 | Fichier | Ce qu'il connecte |
 |---|---|
-| `src/app/fav-button/fav-button.component.spec.ts` | Le composant seul, mais via un vrai rendu DOM (clic réel sur le `<button>`, vérification des attributs ARIA). |
-| `src/app/champion-card/champion-card.component.spec.ts` | `ChampionCardComponent` + `FavButtonComponent` imbriqué + `RouterLink` (avec un routeur réel non-navigant) : vérifie que le clic sur le bouton favori remonte bien jusqu'au composant parent sans déclencher de navigation. |
-| `src/app/dashboard/dashboard.component.spec.ts` | **Intégration complète** : `DashboardComponent` + `DashboardPresenter` + `ChampionCardComponent` + `FavButtonComponent` + le **vrai** `ChampionService` (non mocké). Un clic DOM met à jour l'état du service, qui remonte jusqu'au rendu — exactement le chemin emprunté en production. |
-| `src/app/champion-details/champion-details.component.spec.ts` | `ChampionDetailsComponent` + le **vrai** `ChampionService`, avec seulement `ActivatedRoute` mocké (on ne veut pas dépendre du routeur réel pour fournir un paramètre d'URL). Démontre que deux composants différents (dashboard et détails) partagent le même état via l'injection du service — un favori togglé sur la page détails est visible si on revient au dashboard. |
+| `src/app/champion-card/champion-card.component.spec.ts` | `ChampionCardComponent` + `RouterLink` (avec un routeur réel non-navigant) : vérifie le rendu DOM du nom, du rôle, de la lane et de la difficulté à partir de l'input `champion`. |
+| `src/app/dashboard/dashboard.component.spec.ts` | **Intégration complète** : `DashboardComponent` + `DashboardPresenter` + `ChampionCardComponent` + le **vrai** `ChampionService` (non mocké). Vérifie l'état vide (message + lien vers l'explorateur) et qu'une carte est rendue par champion suivi dans le service — exactement le chemin emprunté en production. |
+| `src/app/champion-details/champion-details.component.spec.ts` | `ChampionDetailsComponent` + le **vrai** `ChampionService`, avec seulement `ActivatedRoute` mocké (on ne veut pas dépendre du routeur réel pour fournir un paramètre d'URL). Vérifie que le champion est résolu depuis l'`id` de la route via le service partagé, et l'affichage d'un état « introuvable » quand aucun champion ne correspond. |
 | `src/app/explorer/champion-explorer.component.spec.ts` | `ChampionExplorerComponent` + `ExplorerPresenter` + le **vrai** `ChampionService`, avec `HttpTestingController` pour simuler l'API Data Dragon. Vérifie le toggle suivre/ne plus suivre de bout en bout : clic DOM → `ChampionService.addChampion`/`removeChampion` → texte du bouton mis à jour. |
 
 ## Pourquoi ce découpage

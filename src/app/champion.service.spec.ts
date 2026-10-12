@@ -94,7 +94,7 @@ describe('ChampionService (unit)', () => {
 
   it('persists the roster to localStorage so it survives a refresh', () => {
     service.addChampion(REMOTE_AHRI);
-    TestBed.flushEffects(); // le persist() déclenché par effect() est planifié, pas synchrone
+    TestBed.tick(); // le persist() déclenché par effect() est planifié, pas synchrone
 
     const stored = JSON.parse(localStorage.getItem('champ-tracker.champions.v1')!);
     expect(stored.length).toBe(1);

@@ -40,7 +40,25 @@
       @if (champ.notes) {
         <section class="details__notes" aria-labelledby="notes-title">
           <h2 id="notes-title" class="details__notes-title">Notes</h2>
-          <p class="details__notes-text">{{ champ.notes }}</p>
+          <p
+            id="notes-text"
+            class="details__notes-text"
+            [class.details__notes-text--expanded]="expanded()"
+            aria-live="polite"
+            [attr.aria-busy]="loreLoading()"
+          >{{ description() }}</p>
+          <button
+            type="button"
+            class="details__toggle"
+            aria-controls="notes-text"
+            [attr.aria-expanded]="expanded()"
+            (click)="toggleDescription()"
+          >
+            {{ expanded() ? 'Réduire' : 'Lire la suite' }}
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/>
+            </svg>
+          </button>
         </section>
       }
     </article>

@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, ReplaySubject, catchError, map, of, share, switchMap } from 'rxjs';
+import { Observable, ReplaySubject, catchError, map, of, share, switchMap, take } from 'rxjs';
 
 export interface RemoteChampion {
   id: string;
@@ -24,15 +24,28 @@ interface DataDragonChampionResponse {
   data: Record<string, DataDragonChampionEntry>;
 }
 
+interface DataDragonChampionDetailResponse {
+  data: Record<string, { lore: string }>;
+}
+
 const VERSIONS_URL = 'https://ddragon.leagueoflegends.com/api/versions.json';
 
 @Injectable({ providedIn: 'root' })
 export class ChampionApiService {
   private readonly http = inject(HttpClient);
 
-  private readonly champions$: Observable<RemoteChampion[]> = this.http.get<string[]>(VERSIONS_URL).pipe(
-    switchMap(versions => {
-      const latest = versions[0];
+  private readonly latestVersion$: Observable<string> = this.http.get<string[]>(VERSIONS_URL).pipe(
+    map(versions => versions[0]),
+    share({
+      connector: () => new ReplaySubject(1),
+      resetOnError: true,
+      resetOnComplete: false,
+      resetOnRefCountZero: true,
+    })
+  );
+
+  private readonly champions$: Observable<RemoteChampion[]> = this.latestVersion$.pipe(
+    switchMap(latest => {
       return this.http.get<DataDragonChampionResponse>(
         `https://ddragon.leagueoflegends.com/cdn/${latest}/data/fr_FR/champion.json`
       ).pipe(
@@ -69,5 +82,31 @@ export class ChampionApiService {
 
   getAllChampions(): Observable<RemoteChampion[]> {
     return this.champions$;
+  }
+
+  /**
+   * Description complète (lore) d'un champion, retrouvé par son nom affiché.
+   * Le blurb de champion.json est tronqué par Riot ; le lore n'existe que dans le
+   * fichier par champion, qu'on ne télécharge qu'à la demande.
+   * Émet null si le champion est inconnu ou si l'appel échoue.
+   */
+  getChampionLore(name: string): Observable<string | null> {
+    return this.champions$.pipe(
+      take(1),
+      map(champions => champions.find(c => c.name === name)),
+      switchMap(champion => {
+        if (!champion) {
+          return of(null);
+        }
+        return this.latestVersion$.pipe(
+          take(1),
+          switchMap(version => this.http.get<DataDragonChampionDetailResponse>(
+            `https://ddragon.leagueoflegends.com/cdn/${version}/data/fr_FR/champion/${champion.id}.json`
+          )),
+          map(response => response.data[champion.id]?.lore ?? null)
+        );
+      }),
+      catchError(() => of(null))
+    );
   }
 }

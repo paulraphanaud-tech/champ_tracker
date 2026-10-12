@@ -89,4 +89,27 @@ describe('ChampionApiService (unit)', () => {
 
     expect(result).toEqual([]);
   });
+
+  it('fetches the full lore of a champion by its display name', () => {
+    let lore: string | null | undefined;
+    service.getChampionLore('Ahri').subscribe(result => (lore = result));
+
+    httpMock.expectOne(VERSIONS_URL).flush(['14.5.1']);
+    httpMock.expectOne(CHAMPIONS_URL).flush(CHAMPION_RESPONSE);
+    httpMock
+      .expectOne('https://ddragon.leagueoflegends.com/cdn/14.5.1/data/fr_FR/champion/Ahri.json')
+      .flush({ data: { Ahri: { lore: 'Le lore complet.' } } });
+
+    expect(lore).toBe('Le lore complet.');
+  });
+
+  it('resolves the lore to null for an unknown champion', () => {
+    let lore: string | null | undefined;
+    service.getChampionLore('Inconnu').subscribe(result => (lore = result));
+
+    httpMock.expectOne(VERSIONS_URL).flush(['14.5.1']);
+    httpMock.expectOne(CHAMPIONS_URL).flush(CHAMPION_RESPONSE);
+
+    expect(lore).toBeNull();
+  });
 });

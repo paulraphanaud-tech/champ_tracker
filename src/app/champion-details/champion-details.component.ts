@@ -4,6 +4,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NgOptimizedImage } from '@angular/common';
 import { ChampionService } from '../champion.service';
 import { ChampionApiService } from '../champion-api.service';
+import { championImageUrl } from '../champion-image';
 
 @Component({
   selector: 'app-champion-details',
@@ -52,8 +53,5 @@ export class ChampionDetailsComponent {
     }
   }
 
-  readonly championImageUrl = computed(() => {
-    const name = this.champion()?.name?.trim() ?? '';
-    return `https://ddragon.leagueoflegends.com/cdn/14.5.1/img/champion/${name}.png`;
-  });
+  readonly championImageUrl = computed(() => championImageUrl(this.champion()?.name ?? ''));
 }

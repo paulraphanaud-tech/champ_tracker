@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Champion } from '../champion';
+import { championImageUrl } from '../champion-image';
 
 @Component({
   selector: 'app-champion-card',
@@ -13,7 +14,5 @@ import { Champion } from '../champion';
 export class ChampionCardComponent {
   readonly champion = input.required<Champion>();
 
-  readonly championImageUrl = computed(() =>
-    `https://ddragon.leagueoflegends.com/cdn/14.5.1/img/champion/${this.champion().name.replaceAll(' ', '')}.png`
-  );
+  readonly championImageUrl = computed(() => championImageUrl(this.champion().name));
 }

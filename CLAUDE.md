@@ -16,13 +16,13 @@ No lint script is configured. The project uses Angular CLI (`ng`) for all tasks.
 
 ## Architecture
 
-Angular 19 standalone app — no NgModules anywhere. All components use `ChangeDetectionStrategy.OnPush`.
+Angular 19 standalone app — no NgModules anywhere. **Zoneless**: `provideExperimentalZonelessChangeDetection()` in `app.config.ts`, no zone.js polyfill (app or tests). All components use `ChangeDetectionStrategy.OnPush`, and all UI state must be a signal (`signal`/`computed`/`input`) — a plain field mutated asynchronously will not re-render. Every `TestBed.configureTestingModule` must include `provideExperimentalZonelessChangeDetection()`.
 
 **State management:** `ChampionService` holds a single `signal<Champion[]>` as the source of truth. All state mutations go through service methods (currently in-memory only, no backend).
 
 **Presenter pattern:** Smart components delegate business logic to a co-located presenter class (e.g., `DashboardPresenter`). The presenter is provided locally (`providers: [DashboardPresenter]` on the component) so it's scoped to that component subtree. The component template binds exclusively through `this.presenter`.
 
-**Routing:** Two routes — dashboard (eager) and `champion/:id` (lazy via `loadComponent`). The details page converts the route param Observable to a signal with `toSignal()`, then derives the champion with `computed()`.
+**Routing:** Two routes — dashboard (eager) and `champion/:id` (lazy via `loadComponent`). Route params are bound to component inputs via `withComponentInputBinding()`: the details page declares `id = input<string>()` and derives the champion with `computed()`.
 
 **Component contracts:** Presentational components use Angular 17+ `input.required<T>()` and `output<T>()` APIs — not `@Input()`/`@Output()` decorators. Templates use control flow syntax (`@for`, `@if`).
 
@@ -36,4 +36,4 @@ Angular 19 standalone app — no NgModules anywhere. All components use `ChangeD
 | `src/app/champion.service.ts` | Root-scoped service, signal state, all mutations |
 | `src/app/app.routes.ts` | Route definitions |
 | `src/app/dashboard/dashboard.presenter.ts` | Dashboard business logic (local provider) |
-| `src/app/champion-details/champion-details.component.ts` | `toSignal` + `computed` pattern for route params |
+| `src/app/champion-details/champion-details.component.ts` | Route param as `input()` + `computed` pattern |

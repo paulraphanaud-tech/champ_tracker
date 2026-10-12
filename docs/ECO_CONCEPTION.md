@@ -48,15 +48,23 @@ templates qui lisent effectivement ce signal sont invalidés et recalculés — 
 de zone.js pour le déclenchement, ni de parcourir l'arbre entier pour vérifier "est-ce
 que quelque chose a changé ici ?".
 
-Ce repo reste sur **zone.js actif** (`provideZoneChangeDetection`, voir
-`src/app/app.config.ts`) plutôt que de basculer en mode *zoneless*
-(`provideExperimentalZonelessChangeDetection`, disponible mais encore expérimental en
-Angular 19). Le zoneless retire zone.js du bundle (quelques dizaines de Ko de moins) et
-réduit encore le nombre de vérifications déclenchées automatiquement, mais impose
-d'adapter la configuration de test Karma (qui dépend de `zone.js/testing`) — un
-compromis stabilité/démo jugé pas nécessaire ici : l'essentiel du gain (éviter les
-recalculs inutiles) est déjà obtenu par `OnPush` + signals, indépendamment de la
-présence de zone.js.
+Ce repo est **entièrement zoneless** (`provideExperimentalZonelessChangeDetection`,
+voir `src/app/app.config.ts`) : zone.js n'est plus chargé, ni dans l'application ni
+dans les tests (polyfills retirés d'`angular.json`). La détection de changement n'est
+plus déclenchée par « n'importe quelle tâche async » mais uniquement par ce qui
+concerne réellement l'UI : écriture d'un signal lu par un template, événement DOM lié
+dans un template, changement d'`input()`. Tout l'état affiché passe donc par des
+signals — y compris le paramètre de route `:id`, reçu comme `input()` grâce à
+`withComponentInputBinding()`.
+
+Gain mesuré (`ng build`, bundle initial) : **285 kB → 250 kB** bruts,
+**80,4 kB → 68,9 kB** transférés (le chunk `polyfills` de zone.js disparaît).
+
+`zone.js` reste listé dans `package.json` uniquement parce qu'Angular 19 le déclare
+comme *peer dependency* obligatoire ; il pourra être retiré à partir d'Angular 20, où
+il devient optionnel. Chaque `TestBed` déclare aussi
+`provideExperimentalZonelessChangeDetection()` pour tester dans les mêmes conditions
+qu'en production.
 
 ## Aller plus loin
 

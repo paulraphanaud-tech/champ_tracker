@@ -9,22 +9,21 @@ const CHAMPIONS: Champion[] = [
   { id: 2, name: 'Lee Sin', role: ChampionRole.Fighter, lane: ChampionLane.Jungle, difficulty: 5, notes: '' },
 ];
 
+/** Le presenter ne lit que `champions` : un stub partiel suffit. */
+type ChampionServiceStub = Pick<ChampionService, 'champions'>;
+
 describe('DashboardPresenter (unit)', () => {
   let presenter: DashboardPresenter;
-  let championServiceSpy: jasmine.SpyObj<ChampionService>;
+  let championServiceStub: ChampionServiceStub;
 
   beforeEach(() => {
-    championServiceSpy = jasmine.createSpyObj<ChampionService>(
-      'ChampionService',
-      [],
-      { champions: signal(CHAMPIONS) }
-    );
+    championServiceStub = { champions: signal(CHAMPIONS) };
 
     TestBed.configureTestingModule({
       providers: [
         provideZonelessChangeDetection(),
         DashboardPresenter,
-        { provide: ChampionService, useValue: championServiceSpy },
+        { provide: ChampionService, useValue: championServiceStub },
       ],
     });
     presenter = TestBed.inject(DashboardPresenter);
@@ -47,14 +46,10 @@ describe('DashboardPresenter (unit)', () => {
 
 describe('DashboardPresenter (unit) — empty roster', () => {
   it('hasAnyChampion is false when the service has no champion', () => {
-    const emptySpy = jasmine.createSpyObj<ChampionService>(
-      'ChampionService',
-      [],
-      { champions: signal([]) }
-    );
+    const emptyStub: ChampionServiceStub = { champions: signal<Champion[]>([]) };
 
     TestBed.configureTestingModule({
-      providers: [provideZonelessChangeDetection(), DashboardPresenter, { provide: ChampionService, useValue: emptySpy }],
+      providers: [provideZonelessChangeDetection(), DashboardPresenter, { provide: ChampionService, useValue: emptyStub }],
     });
     const presenter = TestBed.inject(DashboardPresenter);
 

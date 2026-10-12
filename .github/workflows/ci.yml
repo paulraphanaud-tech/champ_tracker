@@ -32,7 +32,7 @@ jobs:
         run: npx ng build
 
       - name: Unit & integration tests
-        run: npx ng test --watch=false --browsers=ChromeHeadless
+        run: npx ng test --watch=false
 
       - name: Lighthouse CI
         run: npx lhci autorun

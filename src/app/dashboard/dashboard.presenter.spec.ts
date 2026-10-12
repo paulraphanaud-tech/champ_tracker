@@ -5,8 +5,8 @@ import { ChampionService } from '../champion.service';
 import { Champion, ChampionLane, ChampionRole } from '../champion';
 
 const CHAMPIONS: Champion[] = [
-  { id: 1, name: 'Ahri', role: ChampionRole.Mage, lane: ChampionLane.Mid, difficulty: 3, isFavorite: true, notes: '' },
-  { id: 2, name: 'Lee Sin', role: ChampionRole.Fighter, lane: ChampionLane.Jungle, difficulty: 5, isFavorite: false, notes: '' },
+  { id: 1, name: 'Ahri', role: ChampionRole.Mage, lane: ChampionLane.Mid, difficulty: 3, notes: '' },
+  { id: 2, name: 'Lee Sin', role: ChampionRole.Fighter, lane: ChampionLane.Jungle, difficulty: 5, notes: '' },
 ];
 
 describe('DashboardPresenter (unit)', () => {
@@ -16,7 +16,7 @@ describe('DashboardPresenter (unit)', () => {
   beforeEach(() => {
     championServiceSpy = jasmine.createSpyObj<ChampionService>(
       'ChampionService',
-      ['toggleFavorite'],
+      [],
       { champions: signal(CHAMPIONS) }
     );
 
@@ -42,19 +42,13 @@ describe('DashboardPresenter (unit)', () => {
 
     expect(presenter.champions()).toEqual([CHAMPIONS[1]]);
   });
-
-  it('toggleFavorite delegates to ChampionService.toggleFavorite with the given id', () => {
-    presenter.toggleFavorite(42);
-
-    expect(championServiceSpy.toggleFavorite).toHaveBeenCalledOnceWith(42);
-  });
 });
 
 describe('DashboardPresenter (unit) — empty roster', () => {
   it('hasAnyChampion is false when the service has no champion', () => {
     const emptySpy = jasmine.createSpyObj<ChampionService>(
       'ChampionService',
-      ['toggleFavorite'],
+      [],
       { champions: signal([]) }
     );
 

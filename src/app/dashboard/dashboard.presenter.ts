@@ -15,10 +15,6 @@ export class DashboardPresenter {
     return query ? all.filter(c => c.name.toLowerCase().includes(query)) : all;
   });
 
-  toggleFavorite(id: number): void {
-    this.championService.toggleFavorite(id);
-  }
-
   updateSearch(value: string): void {
     this.searchQuery.set(value);
   }

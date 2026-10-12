@@ -56,19 +56,4 @@ describe('DashboardComponent (integration)', () => {
     const cards = fixture.debugElement.queryAll(By.css('app-champion-card'));
     expect(cards.length).toBe(2);
   });
-
-  it('clicking a card fav button flows through presenter -> service -> card -> fav-button DOM', () => {
-    championService.addChampion(REMOTE_AHRI);
-    fixture = TestBed.createComponent(DashboardComponent);
-    fixture.detectChanges();
-
-    expect(championService.champions()[0].isFavorite).toBe(false);
-
-    const favButton = fixture.debugElement.query(By.css('app-fav-button button'));
-    favButton.nativeElement.click();
-    fixture.detectChanges();
-
-    expect(championService.champions()[0].isFavorite).toBe(true);
-    expect(favButton.attributes['aria-pressed']).toBe('true');
-  });
 });

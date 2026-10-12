@@ -42,12 +42,6 @@ export class ChampionService {
     return this.champions().find(c => c.id === id);
   }
 
-  toggleFavorite(id: number): void {
-    this.champions.update(list =>
-      list.map(c => (c.id === id ? { ...c, isFavorite: !c.isFavorite } : c))
-    );
-  }
-
   isTracked(name: string): boolean {
     return this.champions().some(c => c.name === name);
   }
@@ -66,7 +60,6 @@ export class ChampionService {
         role,
         lane: ChampionLane.Top,
         difficulty: 3,
-        isFavorite: false,
         notes: remote.blurb,
       },
     ]);

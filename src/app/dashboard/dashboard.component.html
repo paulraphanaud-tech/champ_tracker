@@ -20,7 +20,7 @@
     } @else {
     <section class="dashboard__grid" aria-label="Liste de champions">
         @for (champion of presenter.champions(); track champion.id) {
-        <app-champion-card [champion]="champion" (favToggled)="presenter.toggleFavorite(champion.id)" />
+        <app-champion-card [champion]="champion" />
         } @empty {
         <p class="dashboard__empty">Aucun champion ne correspond à la recherche.</p>
         }

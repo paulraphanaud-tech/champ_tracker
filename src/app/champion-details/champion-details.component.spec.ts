@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 import { of } from 'rxjs';
-import { By } from '@angular/platform-browser';
 import { ChampionDetailsComponent } from './champion-details.component';
 import { ChampionService } from '../champion.service';
 import { RemoteChampion } from '../champion-api.service';
@@ -61,16 +60,5 @@ describe('ChampionDetailsComponent (integration)', () => {
     const fixture = createFixture('999');
     expect(fixture.componentInstance.champion()).toBeUndefined();
     expect(fixture.nativeElement.textContent).toContain('introuvable');
-  });
-
-  it('toggling favorite here updates the same shared ChampionService state used by the dashboard', () => {
-    const fixture = createFixture('2');
-    expect(championService.getById(2)?.isFavorite).toBe(false);
-
-    fixture.debugElement.query(By.css('app-fav-button button')).nativeElement.click();
-    fixture.detectChanges();
-
-    expect(championService.getById(2)?.isFavorite).toBe(true);
-    expect(fixture.componentInstance.champion()?.isFavorite).toBe(true);
   });
 });

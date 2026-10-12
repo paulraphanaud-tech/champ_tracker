@@ -36,20 +36,6 @@ describe('ChampionService (unit)', () => {
     expect(service.champions()).toEqual([]);
   });
 
-  it('toggleFavorite flips only the targeted champion, immutably', () => {
-    service.addChampion(REMOTE_AHRI);
-    service.addChampion(REMOTE_ZED);
-    const before = service.champions();
-    const target = before.find(c => c.name === 'Zed')!;
-
-    service.toggleFavorite(target.id);
-
-    const after = service.champions();
-    expect(after).not.toBe(before);
-    expect(after.find(c => c.id === target.id)!.isFavorite).toBe(!target.isFavorite);
-    expect(after.filter(c => c.id !== target.id)).toEqual(before.filter(c => c.id !== target.id));
-  });
-
   it('getById returns the matching champion or undefined', () => {
     service.addChampion(REMOTE_AHRI);
     const id = service.champions()[0].id;
@@ -72,7 +58,6 @@ describe('ChampionService (unit)', () => {
     expect(added).toBeTruthy();
     expect(added?.role).toBe(ChampionRole.Assassin);
     expect(added?.lane).toBe(ChampionLane.Top);
-    expect(added?.isFavorite).toBe(false);
     expect(added?.notes).toBe(REMOTE_ZED.blurb);
   });
 

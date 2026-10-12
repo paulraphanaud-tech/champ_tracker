@@ -4,11 +4,10 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { map } from 'rxjs';
 import { NgOptimizedImage } from '@angular/common';
 import { ChampionService } from '../champion.service';
-import { FavButtonComponent } from '../fav-button/fav-button.component';
 
 @Component({
   selector: 'app-champion-details',
-  imports: [RouterLink, NgOptimizedImage, FavButtonComponent],
+  imports: [RouterLink, NgOptimizedImage],
   templateUrl: './champion-details.component.html',
   styleUrl: './champion-details.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -29,10 +28,5 @@ export class ChampionDetailsComponent {
   get championImageUrl(): string {
     const name = this.champion()?.name?.trim() ?? '';
     return `https://ddragon.leagueoflegends.com/cdn/14.5.1/img/champion/${name}.png`;
-  }
-
-  toggleFavorite(): void {
-    const id = this.id();
-    if (id != null) this.championService.toggleFavorite(id);
   }
 }

@@ -4,7 +4,6 @@ export interface Champion {
     role: ChampionRole;
     lane: ChampionLane;
     difficulty: number;
-    isFavorite: boolean;
     notes: string;
 }
 

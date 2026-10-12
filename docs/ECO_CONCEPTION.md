@@ -48,7 +48,7 @@ templates qui lisent effectivement ce signal sont invalidés et recalculés — 
 de zone.js pour le déclenchement, ni de parcourir l'arbre entier pour vérifier "est-ce
 que quelque chose a changé ici ?".
 
-Ce repo est **entièrement zoneless** (`provideExperimentalZonelessChangeDetection`,
+Ce repo est **entièrement zoneless** (`provideZonelessChangeDetection`,
 voir `src/app/app.config.ts`) : zone.js n'est plus chargé, ni dans l'application ni
 dans les tests (polyfills retirés d'`angular.json`). La détection de changement n'est
 plus déclenchée par « n'importe quelle tâche async » mais uniquement par ce qui
@@ -63,7 +63,7 @@ Gain mesuré (`ng build`, bundle initial) : **285 kB → 250 kB** bruts,
 `zone.js` reste listé dans `package.json` uniquement parce qu'Angular 19 le déclare
 comme *peer dependency* obligatoire ; il pourra être retiré à partir d'Angular 20, où
 il devient optionnel. Chaque `TestBed` déclare aussi
-`provideExperimentalZonelessChangeDetection()` pour tester dans les mêmes conditions
+`provideZonelessChangeDetection()` pour tester dans les mêmes conditions
 qu'en production.
 
 ## Aller plus loin

@@ -1,4 +1,4 @@
-import { provideExperimentalZonelessChangeDetection } from '@angular/core';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
@@ -32,7 +32,7 @@ describe('ChampionExplorerComponent (integration)', () => {
     localStorage.clear();
     TestBed.configureTestingModule({
       imports: [ChampionExplorerComponent],
-      providers: [provideExperimentalZonelessChangeDetection(), provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
+      providers: [provideZonelessChangeDetection(), provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
     });
     httpMock = TestBed.inject(HttpTestingController);
     championService = TestBed.inject(ChampionService);

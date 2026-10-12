@@ -1,8 +1,6 @@
 .details {
   min-height: 100vh;
   padding: var(--space-8) var(--space-4);
-  // max-width + margin: auto = colonne centrée qui ne s'étire jamais au-delà d'une
-  // largeur de lecture confortable, même sur un très grand écran (desktop-first ici).
   max-width: 640px;
   margin: 0 auto;
 }
@@ -49,7 +47,6 @@
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
-// Header : flexbox (image + titre côte à côte), ça reste pertinent à toutes les tailles.
 .details__header {
   display: flex;
   align-items: center;
@@ -77,8 +74,6 @@
   color: #fff;
 }
 
-// Bloc meta : empilé (flex column) par défaut sur mobile, puis grille à 3 colonnes
-// égales dès que l'écran offre assez de largeur pour aligner rôle/lane/difficulté.
 .details__meta {
   display: flex;
   flex-direction: column;

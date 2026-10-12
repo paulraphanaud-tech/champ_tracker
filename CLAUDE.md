@@ -16,7 +16,7 @@ No lint script is configured. The project uses Angular CLI (`ng`) for all tasks.
 
 ## Architecture
 
-Angular 19 standalone app — no NgModules anywhere. **Zoneless**: `provideZonelessChangeDetection()` in `app.config.ts`, no zone.js polyfill (app or tests). All components use `ChangeDetectionStrategy.OnPush`, and all UI state must be a signal (`signal`/`computed`/`input`) — a plain field mutated asynchronously will not re-render. Every `TestBed.configureTestingModule` must include `provideZonelessChangeDetection()`.
+Angular 22 standalone app (Node 24, see `.nvmrc`) — no NgModules anywhere. **Zoneless**: `provideZonelessChangeDetection()` in `app.config.ts`, no zone.js polyfill (app or tests). All components use `ChangeDetectionStrategy.OnPush`, and all UI state must be a signal (`signal`/`computed`/`input`) — a plain field mutated asynchronously will not re-render. Every `TestBed.configureTestingModule` must include `provideZonelessChangeDetection()`.
 
 **State management:** `ChampionService` holds a single `signal<Champion[]>` as the source of truth. All state mutations go through service methods (currently in-memory only, no backend).
 

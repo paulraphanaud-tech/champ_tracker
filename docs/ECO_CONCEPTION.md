@@ -60,9 +60,8 @@ signals — y compris le paramètre de route `:id`, reçu comme `input()` grâce
 Gain mesuré (`ng build`, bundle initial) : **285 kB → 250 kB** bruts,
 **80,4 kB → 68,9 kB** transférés (le chunk `polyfills` de zone.js disparaît).
 
-`zone.js` reste listé dans `package.json` uniquement parce qu'Angular 19 le déclare
-comme *peer dependency* obligatoire ; il pourra être retiré à partir d'Angular 20, où
-il devient optionnel. Chaque `TestBed` déclare aussi
+Depuis Angular 20, zone.js n'est plus une *peer dependency* obligatoire : il a été
+retiré de `package.json` et n'est plus installé du tout. Chaque `TestBed` déclare aussi
 `provideZonelessChangeDetection()` pour tester dans les mêmes conditions
 qu'en production.
 

@@ -38,6 +38,7 @@ confiance qu'on a dans le code.
 | `src/app/champion.service.spec.ts` | La logique pure de `ChampionService` (`getById`, `isTracked`, `addChampion`, `removeChampion`), y compris la persistance dans `localStorage` (le service se réhydrate à l'identique dans une nouvelle instance, simulant un refresh de page), sans aucun rendu DOM. |
 | `src/app/champion-api.service.spec.ts` | `ChampionApiService` avec `HttpTestingController` : le vrai réseau est remplacé par des réponses simulées. Vérifie le mapping de la réponse Data Dragon **et** le comportement de cache (`share()` + `ReplaySubject`) — un deuxième abonné ne redéclenche pas d'appel HTTP. |
 | `src/app/dashboard/dashboard.presenter.spec.ts` | `DashboardPresenter` avec un `ChampionService` **mocké** (spy) : vérifie l'exposition des champions (`hasAnyChampion`) et le filtrage de recherche en isolation, sans dépendre du vrai service ni du DOM. |
+| `src/app/champion-details/champion-details.component.unit.spec.ts` | `ChampionDetailsComponent` avec `ChampionService` et `ChampionApiService` **stubés** (`vi.fn`). Le lore est servi par un `Subject` piloté à la main, ce qui permet de tester les états intermédiaires difficiles à atteindre via HTTP : pas de second appel si on replie/redéplie pendant le chargement, repli sur le résumé quand le lore vaut `null`, désabonnement à la destruction, id non numérique ou absent. |
 
 ### Intégration / composants — plusieurs unités connectées, rendu réel (TestBed)
 

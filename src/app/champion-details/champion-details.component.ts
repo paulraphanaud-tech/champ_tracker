@@ -1,7 +1,6 @@
-import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, signal } from '@angular/core';
-import { ActivatedRoute, RouterLink } from '@angular/router';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs';
+import { ChangeDetectionStrategy, Component, DestroyRef, computed, inject, input, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { NgOptimizedImage } from '@angular/common';
 import { ChampionService } from '../champion.service';
 import { ChampionApiService } from '../champion-api.service';
@@ -14,18 +13,16 @@ import { ChampionApiService } from '../champion-api.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ChampionDetailsComponent {
-  private readonly route = inject(ActivatedRoute);
   private readonly championService = inject(ChampionService);
   private readonly championApi = inject(ChampionApiService);
   private readonly destroyRef = inject(DestroyRef);
 
-  private readonly id = toSignal(
-    this.route.paramMap.pipe(map(params => Number(params.get('id'))))
-  );
+  /** Paramètre `:id` de la route, injecté par withComponentInputBinding(). */
+  readonly id = input<string>();
 
   readonly champion = computed(() => {
-    const id = this.id();
-    return id != null ? this.championService.getById(id) : undefined;
+    const id = Number(this.id());
+    return Number.isNaN(id) ? undefined : this.championService.getById(id);
   });
 
   readonly expanded = signal(false);
@@ -55,8 +52,8 @@ export class ChampionDetailsComponent {
     }
   }
 
-  get championImageUrl(): string {
+  readonly championImageUrl = computed(() => {
     const name = this.champion()?.name?.trim() ?? '';
     return `https://ddragon.leagueoflegends.com/cdn/14.5.1/img/champion/${name}.png`;
-  }
+  });
 }

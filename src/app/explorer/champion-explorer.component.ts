@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { RemoteChampion } from '../champion-api.service';
 import { ExplorerPresenter } from './explorer.presenter';
 
 @Component({
@@ -14,8 +13,4 @@ import { ExplorerPresenter } from './explorer.presenter';
 })
 export class ChampionExplorerComponent {
   readonly presenter = inject(ExplorerPresenter);
-
-  trackByName(_index: number, champion: RemoteChampion): string {
-    return champion.id;
-  }
 }

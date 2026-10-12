@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { NgOptimizedImage } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Champion } from '../champion';
@@ -13,8 +13,7 @@ import { Champion } from '../champion';
 export class ChampionCardComponent {
   readonly champion = input.required<Champion>();
 
-  get championImageUrl(): string {
-    const url = `https://ddragon.leagueoflegends.com/cdn/14.5.1/img/champion/${this.champion().name.replaceAll(' ', '')}.png`;
-    return url;
-  }
+  readonly championImageUrl = computed(() =>
+    `https://ddragon.leagueoflegends.com/cdn/14.5.1/img/champion/${this.champion().name.replaceAll(' ', '')}.png`
+  );
 }

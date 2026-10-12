@@ -1,12 +1,13 @@
 import { provideExperimentalZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
+import { provideRouter } from '@angular/router';
+import { RouterTestingHarness } from '@angular/router/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { of } from 'rxjs';
 import { ChampionDetailsComponent } from './champion-details.component';
 import { ChampionService } from '../champion.service';
 import { RemoteChampion } from '../champion-api.service';
+import { appConfig } from '../app.config';
 
 const REMOTE_AHRI: RemoteChampion = {
   id: 'Ahri',
@@ -26,10 +27,6 @@ const REMOTE_LEE_SIN: RemoteChampion = {
   imageUrl: 'https://example.test/lee-sin.png',
 };
 
-function activatedRouteWithId(id: string) {
-  return { paramMap: of(convertToParamMap({ id })) };
-}
-
 describe('ChampionDetailsComponent (integration)', () => {
   let championService: ChampionService;
 
@@ -42,7 +39,6 @@ describe('ChampionDetailsComponent (integration)', () => {
         provideRouter([]),
         provideHttpClient(),
         provideHttpClientTesting(),
-        { provide: ActivatedRoute, useValue: activatedRouteWithId(id) },
       ],
     });
     championService = TestBed.inject(ChampionService);
@@ -50,6 +46,8 @@ describe('ChampionDetailsComponent (integration)', () => {
     championService.addChampion(REMOTE_AHRI);
     championService.addChampion(REMOTE_LEE_SIN);
     const fixture = TestBed.createComponent(ChampionDetailsComponent);
+    // Équivalent de ce que fait withComponentInputBinding() avec le paramètre `:id`.
+    fixture.componentRef.setInput('id', id);
     fixture.detectChanges();
     return fixture;
   }
@@ -60,6 +58,20 @@ describe('ChampionDetailsComponent (integration)', () => {
     const fixture = createFixture('1');
     expect(fixture.componentInstance.champion()?.name).toBe('Ahri');
     expect(fixture.nativeElement.textContent).toContain('Ahri');
+  });
+
+  it('receives the :id route param as an input through the real app routing config', async () => {
+    localStorage.clear();
+    TestBed.configureTestingModule({
+      providers: [...appConfig.providers, provideHttpClientTesting()],
+    });
+    TestBed.inject(ChampionService).addChampion(REMOTE_AHRI);
+
+    const harness = await RouterTestingHarness.create();
+    const component = await harness.navigateByUrl('/champion/1', ChampionDetailsComponent);
+
+    expect(component.champion()?.name).toBe('Ahri');
+    expect(harness.routeNativeElement?.textContent).toContain('Ahri');
   });
 
   it('shows a not-found state when no champion matches the route id', () => {

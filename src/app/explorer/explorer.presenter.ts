@@ -25,8 +25,13 @@ export class ExplorerPresenter {
   // une liste vide une fois le chargement terminé est donc traitée comme une erreur ici.
   readonly error = computed(() => !this.loading() && this.champions().length === 0);
 
+  /** Noms suivis, recalculés uniquement quand la liste suivie change. */
+  private readonly trackedNames = computed(
+    () => new Set(this.championService.champions().map(c => c.name))
+  );
+
   isTracked(name: string): boolean {
-    return this.championService.isTracked(name);
+    return this.trackedNames().has(name);
   }
 
   track(remote: RemoteChampion): void {

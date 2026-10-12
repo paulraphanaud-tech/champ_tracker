@@ -1,5 +1,5 @@
 <a class="champion-card" [routerLink]="['/champion', champion().id]">
-  <img [ngSrc]="championImageUrl" width="120" height="120" class="champion-card__image" [alt]="champion().name" />
+  <img [ngSrc]="championImageUrl()" width="120" height="120" class="champion-card__image" [alt]="champion().name" />
 
   <div class="champion-card__info">
     <div class="champion-card__name-row">

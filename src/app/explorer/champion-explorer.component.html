@@ -15,7 +15,7 @@
     </p>
   } @else {
     <section class="explorer__grid" aria-label="Champions disponibles">
-      @for (champion of presenter.champions(); track trackByName($index, champion)) {
+      @for (champion of presenter.champions(); track champion.id) {
         <article class="explorer-card">
           <img
             [ngSrc]="champion.imageUrl"

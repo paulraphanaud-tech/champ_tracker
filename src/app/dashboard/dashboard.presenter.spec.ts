@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { signal } from '@angular/core';
+import { signal, provideExperimentalZonelessChangeDetection } from '@angular/core';
 import { DashboardPresenter } from './dashboard.presenter';
 import { ChampionService } from '../champion.service';
 import { Champion, ChampionLane, ChampionRole } from '../champion';
@@ -22,6 +22,7 @@ describe('DashboardPresenter (unit)', () => {
 
     TestBed.configureTestingModule({
       providers: [
+        provideExperimentalZonelessChangeDetection(),
         DashboardPresenter,
         { provide: ChampionService, useValue: championServiceSpy },
       ],
@@ -53,7 +54,7 @@ describe('DashboardPresenter (unit) — empty roster', () => {
     );
 
     TestBed.configureTestingModule({
-      providers: [DashboardPresenter, { provide: ChampionService, useValue: emptySpy }],
+      providers: [provideExperimentalZonelessChangeDetection(), DashboardPresenter, { provide: ChampionService, useValue: emptySpy }],
     });
     const presenter = TestBed.inject(DashboardPresenter);
 

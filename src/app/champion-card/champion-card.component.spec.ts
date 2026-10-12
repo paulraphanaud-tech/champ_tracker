@@ -1,3 +1,4 @@
+import { provideExperimentalZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { ChampionCardComponent } from './champion-card.component';
@@ -18,7 +19,7 @@ describe('ChampionCardComponent (component)', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [ChampionCardComponent],
-      providers: [provideRouter([])],
+      providers: [provideExperimentalZonelessChangeDetection(), provideRouter([])],
     });
     fixture = TestBed.createComponent(ChampionCardComponent);
     fixture.componentRef.setInput('champion', CHAMPION);

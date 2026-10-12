@@ -1,3 +1,4 @@
+import { provideExperimentalZonelessChangeDetection } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
 import { provideHttpClient } from '@angular/common/http';
@@ -37,6 +38,7 @@ describe('ChampionDetailsComponent (integration)', () => {
     TestBed.configureTestingModule({
       imports: [ChampionDetailsComponent],
       providers: [
+        provideExperimentalZonelessChangeDetection(),
         provideRouter([]),
         provideHttpClient(),
         provideHttpClientTesting(),

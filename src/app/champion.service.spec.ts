@@ -1,3 +1,4 @@
+import { provideExperimentalZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { ChampionService } from './champion.service';
 import { ChampionLane, ChampionRole } from './champion';
@@ -26,7 +27,9 @@ describe('ChampionService (unit)', () => {
 
   beforeEach(() => {
     localStorage.clear();
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [provideExperimentalZonelessChangeDetection()],
+    });
     service = TestBed.inject(ChampionService);
   });
 
@@ -99,7 +102,9 @@ describe('ChampionService (unit)', () => {
 
     // Simule un refresh de page : nouvel injecteur, nouvelle instance du service.
     TestBed.resetTestingModule();
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [provideExperimentalZonelessChangeDetection()],
+    });
     const rehydrated = TestBed.inject(ChampionService);
 
     expect(rehydrated.champions().length).toBe(1);

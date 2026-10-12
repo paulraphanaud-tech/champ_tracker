@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ng serve          # Dev server at http://localhost:4200
 ng build          # Production build → dist/champ_tracker/
 ng build --watch --configuration development  # Watch mode
-ng test           # Run tests with Karma/Jasmine
+ng test           # Run tests with Vitest (jsdom), via @angular/build:unit-test
 ng test --include='**/foo.component.spec.ts'  # Run a single test file
 ```
 

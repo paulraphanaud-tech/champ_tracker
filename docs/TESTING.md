@@ -64,20 +64,21 @@ confiance qu'on a dans le code.
 
 **Pièges à connaître :**
 - `ChampionService` persiste désormais dans `localStorage`, qui est un état
-  **partagé entre tous les fichiers de spec** (même origine de navigateur pour toute
-  la run Karma). Chaque test qui touche `ChampionService` fait donc
+  **partagé entre tous les tests d'un même fichier de spec** (Vitest isole chaque
+  fichier dans son propre environnement jsdom, mais pas les tests entre eux). Chaque
+  test qui touche `ChampionService` fait donc
   `localStorage.clear()` en `beforeEach`/`afterEach` pour rester isolé — sans ça, un
   champion suivi dans un test polluerait les suivants.
 - La persistance elle-même est écrite via `effect()` (voir `champion.service.ts`),
   qui n'est **pas synchrone** : il est planifié plutôt qu'exécuté immédiatement après
   le `signal.update()`. Un test qui vérifie le contenu de `localStorage` juste après
-  une mutation doit d'abord appeler `TestBed.flushEffects()`, sans quoi il lit l'état
+  une mutation doit d'abord appeler `TestBed.tick()`, sans quoi il lit l'état
   d'avant l'écriture.
 
 ## Lancer les tests
 
 ```bash
 ng test                                          # mode watch
-ng test --watch=false --browsers=ChromeHeadless  # une passe, CI-friendly
+ng test --watch=false                            # une passe, CI-friendly
 ng test --include='**/champion.service.spec.ts'  # un seul fichier
 ```

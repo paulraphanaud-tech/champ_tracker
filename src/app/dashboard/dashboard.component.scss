@@ -52,9 +52,12 @@
   color: var(--color-text-muted);
   font-size: 1rem;
 
+  // Souligné en permanence : un lien dans un bloc de texte ne doit pas être
+  // distinguable par la seule couleur (audit a11y "link-in-text-block").
   a {
     color: var(--color-accent);
-    text-decoration: none;
+    text-decoration: underline;
+    text-underline-offset: 2px;
 
     &:hover {
       color: var(--color-text);
